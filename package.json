@@ -1,0 +1,17 @@
+{
+  "name": "food-rescue-network",
+  "version": "0.1.0",
+  "description": "Community Food Rescue & Redistribution Network - NestJS + Angular DDD Demonstration",
+  "private": true,
+  "scripts": {
+    "backend:install": "cd backend && npm install",
+    "backend:dev": "cd backend && npm run start:dev",
+    "backend:build": "cd backend && npm run build",
+    "backend:test": "cd backend && npm test",
+    "dev": "concurrently \"npm run backend:dev\"",
+    "install:all": "npm run backend:install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

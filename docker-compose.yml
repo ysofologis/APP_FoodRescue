@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  food-rescue-api:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend/food-rescue.db:/app/food-rescue.db
+    depends_on:
+      - db
+
+  db:
+    image: sqlite:latest
+    volumes:
+      - ./backend/food-rescue.db:/database/food-rescue.db
+    command: ["sqlite3", "/database/food-rescue.db"]
