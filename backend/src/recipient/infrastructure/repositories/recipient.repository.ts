@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RecipientAggregate } from '../../domain/aggregates/recipient.aggregate';
-import { RecipientRepository as RecipientRepoInterface } from '../../domain/repositories/recipient.repository';
+import { RecipientRepository as RecipientRepoPort } from '../../domain/repositories/recipient.repository';
 
 @Injectable()
-export class RecipientRepository implements RecipientRepoInterface {
+export class
+RecipientRepositoryImpl extends RecipientRepoPort {
   constructor(
     @InjectRepository(RecipientAggregate)
     private readonly repo: Repository<RecipientAggregate>,
-  ) {}
+  ) {
+    super();
+  }
 
   async save(recipient: RecipientAggregate): Promise<void> {
     await this.repo.save(recipient);

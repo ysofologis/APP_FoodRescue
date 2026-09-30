@@ -1,13 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   VerifierSummary,
   VerifiersReadPort,
 } from '../../../donor/application/ports/verifiers-read.port';
-import { VerifierRepository } from '../repositories/verifier.repository';
+import { VerifierRepository } from '../../domain/repositories/verifier.repository';
 
 @Injectable()
 export class TrustVerifiersReadAdapter implements VerifiersReadPort {
-  constructor(private readonly verifiers: VerifierRepository) {}
+  constructor(
+    @Inject(VerifierRepository)
+    private readonly verifiers: VerifierRepository,
+  ) {}
 
   async findAll(activeOnly?: boolean): Promise<VerifierSummary[]> {
     const verifiers = activeOnly

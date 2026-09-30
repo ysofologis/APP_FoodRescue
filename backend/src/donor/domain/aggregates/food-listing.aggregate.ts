@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { FoodCategory } from '../value-objects/food-category.vo';
 import { Condition } from '../value-objects/condition.vo';
@@ -10,7 +10,7 @@ import { FoodListingClaimedEvent } from '../events/food-listing-claimed.event';
 
 @Entity('food_listings')
 export class FoodListing {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'varchar', length: 36 })
   id: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -34,13 +34,13 @@ export class FoodListing {
   @Column({ type: 'varchar', length: 255, nullable: true })
   allergens?: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   expiresAt: Date;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   pickupWindowStart: Date;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   pickupWindowEnd: Date;
 
   @Column({ type: 'varchar', length: 500 })
@@ -49,7 +49,7 @@ export class FoodListing {
   @Column({ type: 'varchar', length: 500, nullable: true })
   photoUrl?: string;
 
-  @Column({ type: 'varchar', length: 'uuid' })
+  @Column({ type: 'varchar', length: 36 })
   donorId: string;
 
   @ManyToOne(() => DonorAggregate, (donor) => donor.listings)
@@ -59,10 +59,10 @@ export class FoodListing {
   @Column({ type: 'varchar', length: 20, default: 'AVAILABLE' })
   status: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   claimedAt?: Date;
 
-  @Column({ type: 'varchar', length: 'uuid', nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   claimedBy?: string;
 
   static create(

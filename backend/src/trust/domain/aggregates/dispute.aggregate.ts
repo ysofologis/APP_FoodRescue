@@ -1,17 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { DisputeOpenedEvent } from '../events/dispute-opened.event';
 import { DisputeResolvedEvent } from '../events/dispute-resolved.event';
 
 @Entity('disputes')
 export class DisputeAggregate {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'varchar', length: 36 })
   id: string;
 
-  @Column({ type: 'varchar', length: 'uuid' })
+  @Column({ type: 'varchar', length: 36 })
   listingId: string;
 
-  @Column({ type: 'varchar', length: 'uuid' })
+  @Column({ type: 'varchar', length: 36 })
   openedBy: string;
 
   @Column({ type: 'text' })
@@ -23,13 +23,13 @@ export class DisputeAggregate {
   @Column({ type: 'text', nullable: true })
   resolution?: string;
 
-  @Column({ type: 'varchar', length: 'uuid', nullable: true })
+  @Column({ type: 'varchar', length: 36, nullable: true })
   resolvedBy?: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   openedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   resolvedAt?: Date;
 
   static open(

@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ImpactMetricAggregate } from '../../domain/aggregates/impact-metric.aggregate';
-import { ImpactMetricRepository as ImpactMetricRepoInterface } from '../../domain/repositories/impact-metric.repository';
+import { ImpactMetricRepository as ImpactMetricRepoPort } from '../../domain/repositories/impact-metric.repository';
 
 @Injectable()
-export class ImpactMetricRepository implements ImpactMetricRepoInterface {
+export class
+ImpactMetricRepositoryImpl extends ImpactMetricRepoPort {
   constructor(
     @InjectRepository(ImpactMetricAggregate)
     private readonly repo: Repository<ImpactMetricAggregate>,
-  ) {}
+  ) {
+    super();
+  }
 
   async save(metric: ImpactMetricAggregate): Promise<void> {
     await this.repo.save(metric);
@@ -19,11 +22,15 @@ export class ImpactMetricRepository implements ImpactMetricRepoInterface {
     return this.repo.findOne({ where: { id } });
   }
 
-  async findByDonorId(donorId: string): Promise<ImpactMetricAggregate[]> {
+  async findByDonorId(
+    donorId: string,
+  ): Promise<ImpactMetricAggregate[]> {
     return this.repo.find({ where: { donorId } });
   }
 
-  async findByRecipientId(recipientId: string): Promise<ImpactMetricAggregate[]> {
+  async findByRecipientId(
+    recipientId: string,
+  ): Promise<ImpactMetricAggregate[]> {
     return this.repo.find({ where: { recipientId } });
   }
 
@@ -42,7 +49,7 @@ export class ImpactMetricRepository implements ImpactMetricRepoInterface {
     return {
       totalMealsSaved: parseInt(result.totalMealsSaved, 10) || 0,
       totalCo2Avoided: parseFloat(result.totalCo2Avoided) || 0,
-      totalKgDelivered: parseFloat(result.totalKgDelivered) || 0,
+      totalKgDelivered: parseFloat(result.kgDelivered) || 0,
     };
   }
 }

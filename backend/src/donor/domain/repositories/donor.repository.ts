@@ -1,8 +1,8 @@
 import { DonorAggregate } from '../aggregates/donor.aggregate';
 
-export interface DonorRepository {
-  save(donor: DonorAggregate): Promise<void>;
-  findById(id: string): Promise<DonorAggregate | null>;
-  findByEmail(email: string): Promise<DonorAggregate | null>;
-  findAll(): Promise<DonorAggregate[]>;
+export abstract class DonorRepository {
+  abstract save(donor: DonorAggregate): Promise<void>;
+  abstract findById(id: string): Promise<DonorAggregate | null>;
+  abstract findByEmail(email: string): Promise<DonorAggregate | null>;
+  abstract findAll(): Promise<DonorAggregate[]>;
 }

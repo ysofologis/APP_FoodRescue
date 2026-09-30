@@ -3,7 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CqrsModule } from '@nestjs/cqrs';
 
 import { DistributionRunAggregate } from './domain/aggregates/distribution-run.aggregate';
-import { DistributionRunRepository } from './infrastructure/repositories/distribution-run.repository';
+import { DistributionRunRepository } from './domain/repositories/distribution-run.repository';
+import { DistributionRunRepositoryImpl } from './infrastructure/repositories/distribution-run.repository';
 import { LogisticsDriverRunsReadAdapter } from './infrastructure/acl/driver-runs-read.adapter';
 import { AssignDriverCommandHandler } from './application/commands/assign-driver.command';
 import { ConfirmPickupCommandHandler } from './application/commands/confirm-pickup.command';
@@ -18,9 +19,11 @@ import { DistributionRunsController } from './presentation/distribution-runs.con
     TypeOrmModule.forFeature([DistributionRunAggregate]),
     CqrsModule,
   ],
-  controllers: [DistributionRunsController],
   providers: [
-    DistributionRunRepository,
+    {
+      provide: DistributionRunRepository,
+      useClass: DistributionRunRepositoryImpl,
+    },
     LogisticsDriverRunsReadAdapter,
     AssignDriverCommandHandler,
     ConfirmPickupCommandHandler,
@@ -29,6 +32,10 @@ import { DistributionRunsController } from './presentation/distribution-runs.con
     CreateRunCommandHandler,
     ListDistributionRunsQueryHandler,
   ],
-  exports: [DistributionRunRepository, LogisticsDriverRunsReadAdapter],
+  controllers: [DistributionRunsController],
+  exports: [
+    DistributionRunRepository,
+    LogisticsDriverRunsReadAdapter,
+  ],
 })
 export class LogisticsModule {}

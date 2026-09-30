@@ -1,6 +1,7 @@
 /**
  * Anti-corruption layer: donor's claim-tracking view needs to render
- * distribution-run info owned by the logistics context.
+ * distribution-run info owned by the logistics context. Abstract port
+ * for NestJS DI compatibility.
  */
 
 export interface DriverRunSummary {
@@ -12,6 +13,6 @@ export interface DriverRunSummary {
   status: string;
 }
 
-export interface DriverRunsReadPort {
-  findByDriverId(driverId: string): Promise<DriverRunSummary[]>;
+export abstract class DriverRunsReadPort {
+  abstract findByDriverId(driverId: string): Promise<DriverRunSummary[]>;
 }

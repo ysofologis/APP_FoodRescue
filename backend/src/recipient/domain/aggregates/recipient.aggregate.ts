@@ -1,11 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { RecipientCreatedEvent } from '../events/recipient-created.event';
 import { RecipientVerifiedEvent } from '../events/recipient-verified.event';
 
 @Entity('recipients')
 export class RecipientAggregate {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'varchar', length: 36 })
   id: string;
 
   @Column({ type: 'varchar', length: 255 })

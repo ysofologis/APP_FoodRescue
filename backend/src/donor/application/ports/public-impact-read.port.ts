@@ -1,7 +1,7 @@
 /**
  * Anti-corruption layer: donor's public dashboard needs aggregate impact
- * numbers owned by the analytics context. Defined here so donor can query
- * without importing analytics aggregates.
+ * numbers owned by the analytics context. Abstract class so NestJS DI
+ * can use it as a token.
  */
 
 export interface PublicImpactSummary {
@@ -10,6 +10,6 @@ export interface PublicImpactSummary {
   totalKgDelivered: number;
 }
 
-export interface PublicImpactReadPort {
-  getPublicImpact(): Promise<PublicImpactSummary>;
+export abstract class PublicImpactReadPort {
+  abstract getPublicImpact(): Promise<PublicImpactSummary>;
 }

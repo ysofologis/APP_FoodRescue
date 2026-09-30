@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { Organization } from '../value-objects/organization.vo';
 import { DonorStatus } from '../value-objects/donor-status.vo';
@@ -7,7 +7,7 @@ import { DonorCreatedEvent } from '../events/donor-created.event';
 
 @Entity('donors')
 export class DonorAggregate {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'varchar', length: 36 })
   id: string;
 
   @Column({ type: 'varchar', length: 255 })

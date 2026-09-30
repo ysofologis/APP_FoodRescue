@@ -1,15 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 @Entity('impact_metrics')
 export class ImpactMetricAggregate {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'varchar', length: 36 })
   id: string;
 
-  @Column({ type: 'varchar', length: 'uuid' })
+  @Column({ type: 'varchar', length: 36 })
   donorId: string;
 
-  @Column({ type: 'varchar', length: 'uuid' })
+  @Column({ type: 'varchar', length: 36 })
   recipientId: string;
 
   @Column({ type: 'int' })
@@ -24,7 +24,7 @@ export class ImpactMetricAggregate {
   @Column({ type: 'simple-json', default: {} })
   nutritionalSummary: Record<string, unknown>;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   recordedAt: Date;
 
   @Column({ type: 'varchar', length: 20, default: 'ACTIVE' })

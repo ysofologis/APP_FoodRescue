@@ -1,6 +1,6 @@
 /**
- * Anti-corruption layer: trust context owns verifier data; donor
- * surfaces it via this port.
+ * Anti-corruption layer: trust context owns verifier data; donor surfaces
+ * it via this abstract port.
  */
 
 export interface VerifierSummary {
@@ -10,6 +10,6 @@ export interface VerifierSummary {
   active: boolean;
 }
 
-export interface VerifiersReadPort {
-  findAll(activeOnly?: boolean): Promise<VerifierSummary[]>;
+export abstract class VerifiersReadPort {
+  abstract findAll(activeOnly?: boolean): Promise<VerifierSummary[]>;
 }

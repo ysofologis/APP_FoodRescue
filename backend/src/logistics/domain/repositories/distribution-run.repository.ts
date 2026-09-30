@@ -1,8 +1,10 @@
 import { DistributionRunAggregate } from '../aggregates/distribution-run.aggregate';
 
-export interface DistributionRunRepository {
-  save(run: DistributionRunAggregate): Promise<void>;
-  findById(id: string): Promise<DistributionRunAggregate | null>;
-  findByDriverId(driverId: string): Promise<DistributionRunAggregate[]>;
-  findByStatus(status: string): Promise<DistributionRunAggregate[]>;
+export abstract class DistributionRunRepository {
+  abstract save(run: DistributionRunAggregate): Promise<void>;
+  abstract findById(id: string): Promise<DistributionRunAggregate | null>;
+  abstract findByDriverId(
+    driverId: string,
+  ): Promise<DistributionRunAggregate[]>;
+  abstract findByStatus(status: string): Promise<DistributionRunAggregate[]>;
 }

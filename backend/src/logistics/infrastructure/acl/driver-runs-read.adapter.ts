@@ -1,13 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   DriverRunSummary,
   DriverRunsReadPort,
 } from '../../../donor/application/ports/driver-runs-read.port';
-import { DistributionRunRepository } from '../repositories/distribution-run.repository';
+import { DistributionRunRepository } from '../../domain/repositories/distribution-run.repository';
 
 @Injectable()
 export class LogisticsDriverRunsReadAdapter implements DriverRunsReadPort {
-  constructor(private readonly runs: DistributionRunRepository) {}
+  constructor(
+    @Inject(DistributionRunRepository)
+    private readonly runs: DistributionRunRepository,
+  ) {}
 
   async findByDriverId(driverId: string): Promise<DriverRunSummary[]> {
     const runs = await this.runs.findByDriverId(driverId);

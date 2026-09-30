@@ -1,10 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { VerificationCompletedEvent } from '../events/verification-completed.event';
 
 @Entity('verifiers')
 export class VerifierAggregate {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'varchar', length: 36 })
   id: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -85,10 +85,10 @@ export class VerifierAggregate {
 
 @Entity('verifier_audit')
 export class VerifierAuditEntry {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'varchar', length: 36 })
   id: string;
 
-  @Column({ type: 'varchar', length: 'uuid' })
+  @Column({ type: 'varchar', length: 36 })
   verifierId: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -97,10 +97,10 @@ export class VerifierAuditEntry {
   @Column({ type: 'varchar', length: 500 })
   entityType: string;
 
-  @Column({ type: 'varchar', length: 'uuid' })
+  @Column({ type: 'varchar', length: 36 })
   entityId: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   performedAt: Date;
 
   @Column({ type: 'text', nullable: true })

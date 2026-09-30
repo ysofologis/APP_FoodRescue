@@ -1,18 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   DonorImpactSummary,
   ImpactReadPort,
 } from '../../../donor/application/ports/impact-read.port';
-import { ImpactMetricRepository } from '../repositories/impact-metric.repository';
+import { ImpactMetricRepository } from '../../domain/repositories/impact-metric.repository';
 
 /**
  * Implementation of donor's ImpactReadPort, owned by the analytics
- * context. This is the upstream side of the donor→analytics dependency:
- * analytics provides the data; donor defines the shape.
+ * context. The donor port is implemented here; analytics provides the
+ * data; donor defines the shape.
+ *
+ * Injection via the abstract port token (`@Inject(ImpactMetricRepository)`)
+ * so Nest resolves through the port binding, not the concrete impl class.
+ * This keeps cross-module DI working across the analytics → donor module
+ * boundary.
  */
 @Injectable()
 export class AnalyticsImpactReadAdapter implements ImpactReadPort {
-  constructor(private readonly metrics: ImpactMetricRepository) {}
+  constructor(
+    @Inject(ImpactMetricRepository)
+    private readonly metrics: ImpactMetricRepository,
+  ) {}
 
   async getDonorImpact(donorId: string): Promise<DonorImpactSummary> {
     const metrics = await this.metrics.findByDonorId(donorId);

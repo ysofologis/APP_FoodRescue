@@ -2,6 +2,7 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
+  HttpException,
   HttpStatus,
   Logger,
 } from '@nestjs/common';
@@ -14,25 +15,35 @@ import { Response, Request } from 'express';
  * would surface as 500s, leaking internal reasoning to the client.
  *
  * Already-typed Nest exceptions (`BadRequestException`, `NotFoundException`,
- * etc.) are routed by Nest's default filter and never reach this code.
+ * etc.) extend `HttpException` and are routed by Nest's default filter.
+ * We re-throw those so they don't get reclassified as domain violations.
  */
-@Catch(Error)
+@Catch()
 export class DomainErrorFilter implements ExceptionFilter {
   private readonly logger = new Logger(DomainErrorFilter.name);
 
-  catch(exception: Error, host: ArgumentsHost): void {
+  catch(exception: unknown, host: ArgumentsHost): void {
+    if (exception instanceof HttpException) {
+      // Defer to Nest's built-in HttpException filter for transport-layer
+      // errors (404, 400, 401, etc.) so the response shape stays correct.
+      throw exception;
+    }
+
+    const err = exception as Error;
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
+    const message = err?.message ?? 'Unknown domain error';
+
     this.logger.error(
-      `Domain invariant violation at ${request.method} ${request.url}: ${exception.message}`,
+      `Domain invariant violation at ${request.method} ${request.url}: ${message}`,
     );
 
     response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       error: 'DomainInvariantViolation',
-      message: exception.message,
+      message,
       path: request.url,
     });
   }

@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FoodListing } from '../../domain/aggregates/food-listing.aggregate';
-import { FoodListingRepository as FoodListingRepoInterface } from '../../domain/repositories/food-listing.repository';
+import { FoodListingRepository as FoodListingRepoPort } from '../../domain/repositories/food-listing.repository';
 
 @Injectable()
-export class FoodListingRepository implements FoodListingRepoInterface {
+export class
+FoodListingRepositoryImpl extends FoodListingRepoPort {
   constructor(
     @InjectRepository(FoodListing)
     private readonly repo: Repository<FoodListing>,
-  ) {}
+  ) {
+    super();
+  }
 
   async save(listing: FoodListing): Promise<void> {
     await this.repo.save(listing);

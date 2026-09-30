@@ -1,8 +1,8 @@
 import { VerifierAggregate } from '../aggregates/verifier.aggregate';
 
-export interface VerifierRepository {
-  save(verifier: VerifierAggregate): Promise<void>;
-  findById(id: string): Promise<VerifierAggregate | null>;
-  findAll(): Promise<VerifierAggregate[]>;
-  findActive(): Promise<VerifierAggregate[]>;
+export abstract class VerifierRepository {
+  abstract save(verifier: VerifierAggregate): Promise<void>;
+  abstract findById(id: string): Promise<VerifierAggregate | null>;
+  abstract findAll(): Promise<VerifierAggregate[]>;
+  abstract findActive(): Promise<VerifierAggregate[]>;
 }

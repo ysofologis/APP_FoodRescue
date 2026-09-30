@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { VerifierAggregate } from '../../domain/aggregates/verifier.aggregate';
-import { VerifierRepository as VerifierRepoInterface } from '../../domain/repositories/verifier.repository';
+import { VerifierRepository as VerifierRepoPort } from '../../domain/repositories/verifier.repository';
 
 @Injectable()
-export class VerifierRepository implements VerifierRepoInterface {
+export class
+VerifierRepositoryImpl extends VerifierRepoPort {
   constructor(
     @InjectRepository(VerifierAggregate)
     private readonly repo: Repository<VerifierAggregate>,
-  ) {}
+  ) {
+    super();
+  }
 
   async save(verifier: VerifierAggregate): Promise<void> {
     await this.repo.save(verifier);

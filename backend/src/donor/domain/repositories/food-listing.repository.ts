@@ -1,9 +1,9 @@
 import { FoodListing } from '../aggregates/food-listing.aggregate';
 
-export interface FoodListingRepository {
-  save(listing: FoodListing): Promise<void>;
-  findById(id: string): Promise<FoodListing | null>;
-  findByDonorId(donorId: string): Promise<FoodListing[]>;
-  findAvailable(): Promise<FoodListing[]>;
-  findByStatus(status: string): Promise<FoodListing[]>;
+export abstract class FoodListingRepository {
+  abstract save(listing: FoodListing): Promise<void>;
+  abstract findById(id: string): Promise<FoodListing | null>;
+  abstract findByDonorId(donorId: string): Promise<FoodListing[]>;
+  abstract findAvailable(): Promise<FoodListing[]>;
+  abstract findByStatus(status: string): Promise<FoodListing[]>;
 }

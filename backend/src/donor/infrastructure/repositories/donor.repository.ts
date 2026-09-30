@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DonorAggregate } from '../../domain/aggregates/donor.aggregate';
-import { DonorRepository as DonorRepoInterface } from '../../domain/repositories/donor.repository';
+import { DonorRepository as DonorRepoPort } from '../../domain/repositories/donor.repository';
 
 @Injectable()
-export class DonorRepository implements DonorRepoInterface {
+export class
+DonorRepositoryImpl extends DonorRepoPort {
   constructor(
     @InjectRepository(DonorAggregate)
     private readonly repo: Repository<DonorAggregate>,
-  ) {}
+  ) {
+    super();
+  }
 
   async save(donor: DonorAggregate): Promise<void> {
     await this.repo.save(donor);

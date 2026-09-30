@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DisputeAggregate } from '../../domain/aggregates/dispute.aggregate';
-import { DisputeRepository as DisputeRepoInterface } from '../../domain/repositories/dispute.repository';
+import { DisputeRepository as DisputeRepoPort } from '../../domain/repositories/dispute.repository';
 
 @Injectable()
-export class DisputeRepository implements DisputeRepoInterface {
+export class
+DisputeRepositoryImpl extends DisputeRepoPort {
   constructor(
     @InjectRepository(DisputeAggregate)
     private readonly repo: Repository<DisputeAggregate>,
-  ) {}
+  ) {
+    super();
+  }
 
   async save(dispute: DisputeAggregate): Promise<void> {
     await this.repo.save(dispute);

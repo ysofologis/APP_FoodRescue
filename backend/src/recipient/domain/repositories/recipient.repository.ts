@@ -1,8 +1,8 @@
 import { RecipientAggregate } from '../aggregates/recipient.aggregate';
 
-export interface RecipientRepository {
-  save(recipient: RecipientAggregate): Promise<void>;
-  findById(id: string): Promise<RecipientAggregate | null>;
-  findAll(): Promise<RecipientAggregate[]>;
-  findVerified(): Promise<RecipientAggregate[]>;
+export abstract class RecipientRepository {
+  abstract save(recipient: RecipientAggregate): Promise<void>;
+  abstract findById(id: string): Promise<RecipientAggregate | null>;
+  abstract findAll(): Promise<RecipientAggregate[]>;
+  abstract findVerified(): Promise<RecipientAggregate[]>;
 }

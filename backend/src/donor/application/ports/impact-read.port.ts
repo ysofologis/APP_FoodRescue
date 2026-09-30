@@ -1,11 +1,14 @@
 /**
  * Anti-corruption layer: donor defines its own read-side port for impact data
  * owned by the analytics context. The donor module never imports analytics
- * aggregates — it depends only on this interface.
+ * aggregates — it depends only on this abstract class.
  *
- * The analytics module will provide the concrete implementation, wired via
- * the donor module's providers list once the cross-context integration
- * pattern is chosen (event-driven projection, ACL service, or shared kernel).
+ * Abstract class (not interface) so NestJS DI can use it as a token —
+ * interfaces are erased at compile time, abstract classes are not.
+ *
+ * The analytics module provides the concrete implementation, wired via
+ * `{ provide: ImpactReadPort, useClass: AnalyticsImpactReadAdapter }` in
+ * donor.module.ts.
  */
 
 export interface DonorImpactSummary {
@@ -15,6 +18,6 @@ export interface DonorImpactSummary {
   totalKgDelivered: number;
 }
 
-export interface ImpactReadPort {
-  getDonorImpact(donorId: string): Promise<DonorImpactSummary>;
+export abstract class ImpactReadPort {
+  abstract getDonorImpact(donorId: string): Promise<DonorImpactSummary>;
 }

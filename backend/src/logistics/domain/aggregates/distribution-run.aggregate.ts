@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { DistributionRunCreatedEvent } from '../events/distribution-run-created.event';
 import { PickupConfirmedEvent } from '../events/pickup-confirmed.event';
@@ -6,19 +6,19 @@ import { DeliveryCompletedEvent } from '../events/delivery-completed.event';
 
 @Entity('distribution_runs')
 export class DistributionRunAggregate {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'varchar', length: 36 })
   id: string;
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @Column({ type: 'varchar', length: 'uuid' })
+  @Column({ type: 'varchar', length: 36 })
   driverId: string;
 
   @Column({ type: 'simple-json' })
   listingIds: string[];
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   scheduledPickup: Date;
 
   @Column({ type: 'varchar', length: 500, nullable: true })
@@ -27,10 +27,10 @@ export class DistributionRunAggregate {
   @Column({ type: 'varchar', length: 20, default: 'SCHEDULED' })
   status: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   pickedUpAt?: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   deliveredAt?: Date;
 
   static create(

@@ -41,13 +41,13 @@ export class AssignDriverDto {
 }
 
 export class ConfirmPickupDto {
-  @IsUUID()
-  runId!: string;
+  // runId comes from URL parameter :id; body is intentionally empty.
+  // ValidationPipe with whitelist:true strips everything not declared.
 }
 
 export class ConfirmDeliveryDto {
-  @IsUUID()
-  runId!: string;
+  // runId comes from URL parameter :id; body is intentionally empty.
+  // ValidationPipe with whitelist:true strips everything not declared.
 }
 
 export class CancelRunDto {

@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DistributionRunAggregate } from '../../domain/aggregates/distribution-run.aggregate';
-import { DistributionRunRepository as DistributionRunRepoInterface } from '../../domain/repositories/distribution-run.repository';
+import { DistributionRunRepository as DistributionRunRepoPort } from '../../domain/repositories/distribution-run.repository';
 
 @Injectable()
-export class DistributionRunRepository implements DistributionRunRepoInterface {
+export class
+DistributionRunRepositoryImpl extends DistributionRunRepoPort {
   constructor(
     @InjectRepository(DistributionRunAggregate)
     private readonly repo: Repository<DistributionRunAggregate>,
-  ) {}
+  ) {
+    super();
+  }
 
   async save(run: DistributionRunAggregate): Promise<void> {
     await this.repo.save(run);
@@ -19,7 +22,9 @@ export class DistributionRunRepository implements DistributionRunRepoInterface {
     return this.repo.findOne({ where: { id } });
   }
 
-  async findByDriverId(driverId: string): Promise<DistributionRunAggregate[]> {
+  async findByDriverId(
+    driverId: string,
+  ): Promise<DistributionRunAggregate[]> {
     return this.repo.find({ where: { driverId } });
   }
 
