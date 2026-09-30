@@ -1,21 +1,18 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { ImpactMetricAggregate } from '../../domain/aggregates/impact-metric.aggregate';
-import { ImpactMetricRepository as ImpactMetricRepoInterface } from '../../domain/repositories/impact-metric.repository';
+import { ImpactMetricRepository } from '../../domain/repositories/impact-metric.repository';
 
 export class GetImpactReportQuery {
   constructor(public readonly donorId?: string, public readonly recipientId?: string) {}
 }
 
+@Injectable()
 @QueryHandler(GetImpactReportQuery)
 export class GetImpactReportQueryHandler
   implements IQueryHandler<GetImpactReportQuery>
 {
-  constructor(
-    @InjectRepository(ImpactMetricAggregate)
-    private readonly metricRepo: Repository<ImpactMetricAggregate>,
-  ) {}
+  constructor(private readonly metrics: ImpactMetricRepository) {}
 
   async execute(query: GetImpactReportQuery): Promise<{
     metrics: ImpactMetricAggregate[];
@@ -24,14 +21,15 @@ export class GetImpactReportQueryHandler
     let metrics: ImpactMetricAggregate[];
 
     if (query.donorId) {
-      metrics = await this.metricRepo.find({ where: { donorId: query.donorId } });
+      metrics = await this.metrics.findByDonorId(query.donorId);
     } else if (query.recipientId) {
-      metrics = await this.metricRepo.find({ where: { recipientId: query.recipientId } });
+      metrics = await this.metrics.findByRecipientId(query.recipientId);
     } else {
-      metrics = await this.metricRepo.find();
+      // No specific filter — return the global aggregate only.
+      metrics = [];
     }
 
-    const aggregate = await this.metricRepo.getAggregateMetrics();
+    const aggregate = await this.metrics.getAggregateMetrics();
 
     return { metrics, aggregate };
   }

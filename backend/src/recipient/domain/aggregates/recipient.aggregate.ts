@@ -1,5 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { RecipientCreatedEvent } from '../events/recipient-created.event';
+import { RecipientVerifiedEvent } from '../events/recipient-verified.event';
 
 @Entity('recipients')
 export class RecipientAggregate {
@@ -46,7 +48,7 @@ export class RecipientAggregate {
     legalDocsRef?: string,
     contactPhone?: string,
     address?: string,
-  ): [RecipientAggregate, any] {
+  ): [RecipientAggregate, RecipientCreatedEvent] {
     const recipient = new RecipientAggregate();
     recipient.id = uuid();
     recipient.name = name;
@@ -58,14 +60,17 @@ export class RecipientAggregate {
     recipient.status = 'PENDING';
     recipient.reliabilityScore = 0;
 
-    return [recipient, { type: 'recipient.created', recipientId: recipient.id }];
+    const event = new RecipientCreatedEvent(recipient.id, recipient.name, recipient.orgType);
+    return [recipient, event];
   }
 
-  verify(): void {
+  verify(): [RecipientAggregate, RecipientVerifiedEvent] {
     if (this.status === 'VERIFIED') {
       throw new Error('Recipient is already verified');
     }
     this.status = 'VERIFIED';
+    const event = new RecipientVerifiedEvent(this.id, this.name);
+    return [this, event];
   }
 
   suspend(reason: string): void {

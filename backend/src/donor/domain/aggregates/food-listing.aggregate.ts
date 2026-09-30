@@ -106,7 +106,7 @@ export class FoodListing {
     return [listing, event];
   }
 
-  claim(recipientId: string): void {
+  claim(recipientId: string): [FoodListing, FoodListingClaimedEvent] {
     if (this.status !== 'AVAILABLE') {
       throw new Error(`Cannot claim listing in status: ${this.status}`);
     }
@@ -116,6 +116,13 @@ export class FoodListing {
     this.status = 'CLAIMED';
     this.claimedAt = new Date();
     this.claimedBy = recipientId;
+
+    const event = new FoodListingClaimedEvent(
+      this.id,
+      recipientId,
+      this.claimedAt,
+    );
+    return [this, event];
   }
 
   confirmPickup(): void {

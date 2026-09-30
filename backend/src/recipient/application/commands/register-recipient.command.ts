@@ -1,8 +1,7 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { RecipientAggregate } from '../../domain/aggregates/recipient.aggregate';
-import { RecipientRepository as RecipientRepoInterface } from '../../domain/repositories/recipient.repository';
+import { RecipientRepository } from '../../domain/repositories/recipient.repository';
 
 export class RegisterRecipientCommand {
   constructor(
@@ -15,17 +14,25 @@ export class RegisterRecipientCommand {
   ) {}
 }
 
+@Injectable()
 @CommandHandler(RegisterRecipientCommand)
 export class RegisterRecipientCommandHandler
-  implements ICommandHandler<RegisterRecipientCommand>
+  implements ICommandHandler<RegisterRecipientCommand, RecipientAggregate>
 {
   constructor(
-    @InjectRepository(RecipientAggregate)
-    private readonly recipientRepo: Repository<RecipientAggregate>,
+    private readonly recipients: RecipientRepository,
+    private readonly events: EventBus,
   ) {}
 
   async execute(command: RegisterRecipientCommand): Promise<RecipientAggregate> {
-    const [recipient] = RecipientAggregate.create(
+    if (!command.name || command.name.trim().length < 2) {
+      throw new BadRequestException('Recipient name must be at least 2 characters');
+    }
+    if (!command.contactEmail || !command.contactEmail.includes('@')) {
+      throw new BadRequestException('Valid contact email is required');
+    }
+
+    const [recipient, event] = RecipientAggregate.create(
       command.name,
       command.orgType,
       command.contactEmail,
@@ -34,7 +41,8 @@ export class RegisterRecipientCommandHandler
       command.address,
     );
 
-    await this.recipientRepo.save(recipient);
+    await this.recipients.save(recipient);
+    this.events.publish(event as object);
     return recipient;
   }
 }

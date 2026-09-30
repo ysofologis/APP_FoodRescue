@@ -1,26 +1,28 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { DisputeAggregate } from '../../domain/aggregates/dispute.aggregate';
-import { DisputeRepository as DisputeRepoInterface } from '../../domain/repositories/dispute.repository';
+import { DisputeRepository } from '../../domain/repositories/dispute.repository';
 
 export class ListDisputesQuery {
-  constructor(public readonly openOnly?: boolean) {}
+  constructor(
+    public readonly openOnly: boolean = true,
+    public readonly listingId?: string,
+  ) {}
 }
 
+@Injectable()
 @QueryHandler(ListDisputesQuery)
 export class ListDisputesQueryHandler
-  implements IQueryHandler<ListDisputesQuery>
+  implements IQueryHandler<ListDisputesQuery, DisputeAggregate[]>
 {
-  constructor(
-    @InjectRepository(DisputeAggregate)
-    private readonly disputeRepo: Repository<DisputeAggregate>,
-  ) {}
+  constructor(private readonly disputes: DisputeRepository) {}
 
   async execute(query: ListDisputesQuery): Promise<DisputeAggregate[]> {
-    if (query.openOnly) {
-      return this.disputeRepo.find({ where: { status: 'OPEN' } });
+    if (query.listingId) {
+      return this.disputes.findByListingId(query.listingId);
     }
-    return this.disputeRepo.find();
+    return query.openOnly
+      ? this.disputes.findOpen()
+      : [];
   }
 }

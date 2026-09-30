@@ -1,26 +1,22 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { RecipientAggregate } from '../../domain/aggregates/recipient.aggregate';
-import { RecipientRepository as RecipientRepoInterface } from '../../domain/repositories/recipient.repository';
+import { RecipientRepository } from '../../domain/repositories/recipient.repository';
 
 export class ListRecipientsQuery {
-  constructor(public readonly verifiedOnly?: boolean) {}
+  constructor(public readonly verifiedOnly: boolean = false) {}
 }
 
+@Injectable()
 @QueryHandler(ListRecipientsQuery)
 export class ListRecipientsQueryHandler
-  implements IQueryHandler<ListRecipientsQuery>
+  implements IQueryHandler<ListRecipientsQuery, RecipientAggregate[]>
 {
-  constructor(
-    @InjectRepository(RecipientAggregate)
-    private readonly recipientRepo: Repository<RecipientAggregate>,
-  ) {}
+  constructor(private readonly recipients: RecipientRepository) {}
 
   async execute(query: ListRecipientsQuery): Promise<RecipientAggregate[]> {
-    if (query.verifiedOnly) {
-      return this.recipientRepo.find({ where: { status: 'VERIFIED' } });
-    }
-    return this.recipientRepo.find();
+    return query.verifiedOnly
+      ? this.recipients.findVerified()
+      : this.recipients.findAll();
   }
 }

@@ -1,26 +1,19 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { VerifierAggregate } from '../../trust/domain/aggregates/verifier.aggregate';
-import { VerifierRepository as VerifierRepoInterface } from '../../trust/domain/repositories/verifier.repository';
+import { Injectable } from '@nestjs/common';
+import { VerifiersReadPort } from '../ports/verifiers-read.port';
 
 export class GetVerifiersQuery {
   constructor(public readonly activeOnly?: boolean) {}
 }
 
+@Injectable()
 @QueryHandler(GetVerifiersQuery)
 export class GetVerifiersQueryHandler
   implements IQueryHandler<GetVerifiersQuery>
 {
-  constructor(
-    @InjectRepository(VerifierAggregate)
-    private readonly verifierRepo: Repository<VerifierAggregate>,
-  ) {}
+  constructor(private readonly verifiers: VerifiersReadPort) {}
 
-  async execute(query: GetVerifiersQuery): Promise<VerifierAggregate[]> {
-    if (query.activeOnly) {
-      return this.verifierRepo.find({ where: { active: true } });
-    }
-    return this.verifierRepo.find();
+  async execute(query: GetVerifiersQuery) {
+    return this.verifiers.findAll(query.activeOnly);
   }
 }

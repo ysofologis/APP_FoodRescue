@@ -1,8 +1,8 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { ImpactMetricAggregate } from '../../domain/aggregates/impact-metric.aggregate';
-import { ImpactMetricRepository as ImpactMetricRepoInterface } from '../../domain/repositories/impact-metric.repository';
+import { ImpactMetricRepository } from '../../domain/repositories/impact-metric.repository';
+import { ImpactRecordedEvent } from '../../domain/events/impact-recorded.event';
 
 export class RecordImpactCommand {
   constructor(
@@ -15,16 +15,27 @@ export class RecordImpactCommand {
   ) {}
 }
 
+@Injectable()
 @CommandHandler(RecordImpactCommand)
 export class RecordImpactCommandHandler
-  implements ICommandHandler<RecordImpactCommand>
+  implements ICommandHandler<RecordImpactCommand, ImpactMetricAggregate>
 {
   constructor(
-    @InjectRepository(ImpactMetricAggregate)
-    private readonly metricRepo: Repository<ImpactMetricAggregate>,
+    private readonly metrics: ImpactMetricRepository,
+    private readonly events: EventBus,
   ) {}
 
   async execute(command: RecordImpactCommand): Promise<ImpactMetricAggregate> {
+    if (command.mealsSaved < 0) {
+      throw new BadRequestException('mealsSaved must be >= 0');
+    }
+    if (command.co2KgAvoided < 0) {
+      throw new BadRequestException('co2KgAvoided must be >= 0');
+    }
+    if (command.kgDelivered < 0) {
+      throw new BadRequestException('kgDelivered must be >= 0');
+    }
+
     const [metric] = ImpactMetricAggregate.create(
       command.donorId,
       command.recipientId,
@@ -34,7 +45,17 @@ export class RecordImpactCommandHandler
       command.nutritionalSummary,
     );
 
-    await this.metricRepo.save(metric);
+    await this.metrics.save(metric);
+    this.events.publish(
+      new ImpactRecordedEvent(
+        metric.id,
+        metric.donorId,
+        metric.recipientId,
+        metric.mealsSaved,
+        Number(metric.co2KgAvoided),
+        Number(metric.kgDelivered),
+      ) as object,
+    );
     return metric;
   }
 }

@@ -1,26 +1,22 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { VerifierAggregate } from '../../domain/aggregates/verifier.aggregate';
-import { VerifierRepository as VerifierRepoInterface } from '../../domain/repositories/verifier.repository';
+import { VerifierRepository } from '../../domain/repositories/verifier.repository';
 
 export class ListVerificationsQuery {
-  constructor(public readonly activeOnly?: boolean) {}
+  constructor(public readonly activeOnly: boolean = false) {}
 }
 
+@Injectable()
 @QueryHandler(ListVerificationsQuery)
 export class ListVerificationsQueryHandler
-  implements IQueryHandler<ListVerificationsQuery>
+  implements IQueryHandler<ListVerificationsQuery, VerifierAggregate[]>
 {
-  constructor(
-    @InjectRepository(VerifierAggregate)
-    private readonly verifierRepo: Repository<VerifierAggregate>,
-  ) {}
+  constructor(private readonly verifiers: VerifierRepository) {}
 
   async execute(query: ListVerificationsQuery): Promise<VerifierAggregate[]> {
-    if (query.activeOnly) {
-      return this.verifierRepo.find({ where: { active: true } });
-    }
-    return this.verifierRepo.find();
+    return query.activeOnly
+      ? this.verifiers.findActive()
+      : this.verifiers.findAll();
   }
 }

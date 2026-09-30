@@ -1,5 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { DisputeOpenedEvent } from '../events/dispute-opened.event';
+import { DisputeResolvedEvent } from '../events/dispute-resolved.event';
 
 @Entity('disputes')
 export class DisputeAggregate {
@@ -47,7 +49,7 @@ export class DisputeAggregate {
     return [dispute, event];
   }
 
-  resolve(resolution: string, resolvedBy: string): void {
+  resolve(resolution: string, resolvedBy: string): [DisputeAggregate, DisputeResolvedEvent] {
     if (this.status !== 'OPEN') {
       throw new Error('Dispute is not open');
     }
@@ -55,5 +57,7 @@ export class DisputeAggregate {
     this.resolution = resolution;
     this.resolvedBy = resolvedBy;
     this.resolvedAt = new Date();
+    const event = new DisputeResolvedEvent(this.id, this.listingId, resolution, resolvedBy);
+    return [this, event];
   }
 }

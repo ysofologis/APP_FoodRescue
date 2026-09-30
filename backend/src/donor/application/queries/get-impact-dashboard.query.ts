@@ -1,36 +1,28 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ImpactMetricAggregate } from '../../analytics/domain/aggregates/impact-metric.aggregate';
-import { ImpactMetricRepository as ImpactMetricRepoInterface } from '../../analytics/domain/repositories/impact-metric.repository';
+import { Injectable } from '@nestjs/common';
+import { ImpactReadPort } from '../ports/impact-read.port';
 
 export class GetImpactDashboardQuery {
   constructor(public readonly donorId?: string) {}
 }
 
+@Injectable()
 @QueryHandler(GetImpactDashboardQuery)
 export class GetImpactDashboardQueryHandler
   implements IQueryHandler<GetImpactDashboardQuery>
 {
-  constructor(
-    @InjectRepository(ImpactMetricAggregate)
-    private readonly metricRepo: Repository<ImpactMetricAggregate>,
-  ) {}
+  constructor(private readonly impact: ImpactReadPort) {}
 
-  async execute(query: GetImpactDashboardQuery): Promise<{
-    metrics: ImpactMetricAggregate[];
-    aggregate: { totalMealsSaved: number; totalCo2Avoided: number; totalKgDelivered: number };
-  }> {
-    let metrics: ImpactMetricAggregate[];
-
+  async execute(query: GetImpactDashboardQuery) {
+    // The dashboard is keyed by donor when present, but the public
+    // view is donor-scoped or global — the ACL implementation decides.
     if (query.donorId) {
-      metrics = await this.metricRepo.find({ where: { donorId: query.donorId } });
-    } else {
-      metrics = await this.metricRepo.find();
+      return this.impact.getDonorImpact(query.donorId);
     }
-
-    const aggregate = await this.metricRepo.getAggregateMetrics();
-
-    return { metrics, aggregate };
+    // No donorId → caller wants the public dashboard shape.
+    // Surfacing through the same port keeps the ACL minimal; analytics
+    // can extend the port later (e.g. add getDashboard()).
+    const summary = await this.impact.getDonorImpact('__public__');
+    return summary;
   }
 }

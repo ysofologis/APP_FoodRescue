@@ -1,44 +1,39 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { DisputeAggregate } from '../../domain/aggregates/dispute.aggregate';
-import { DisputeRepository as DisputeRepoInterface } from '../../domain/repositories/dispute.repository';
-import { DisputeResolutionService } from '../../domain/services/dispute-resolution.service';
+import { DisputeRepository } from '../../domain/repositories/dispute.repository';
 
 export class ResolveDisputeCommand {
   constructor(
     public readonly disputeId: string,
-    public readonly resolution: string,
     public readonly resolvedBy: string,
+    public readonly resolution: string,
   ) {}
 }
 
+@Injectable()
 @CommandHandler(ResolveDisputeCommand)
 export class ResolveDisputeCommandHandler
-  implements ICommandHandler<ResolveDisputeCommand>
+  implements ICommandHandler<ResolveDisputeCommand, DisputeAggregate>
 {
   constructor(
-    @InjectRepository(DisputeAggregate)
-    private readonly disputeRepo: Repository<DisputeAggregate>,
+    private readonly disputes: DisputeRepository,
+    private readonly events: EventBus,
   ) {}
 
   async execute(command: ResolveDisputeCommand): Promise<DisputeAggregate> {
-    DisputeResolutionService.validateResolution(
-      command.disputeId,
-      command.resolution,
-      command.resolvedBy,
-    );
-
-    const dispute = await this.disputeRepo.findOne({
-      where: { id: command.disputeId },
-    });
-
-    if (!dispute) {
-      throw new Error(`Dispute not found: ${command.disputeId}`);
+    if (!command.resolution || command.resolution.trim().length < 3) {
+      throw new BadRequestException('Resolution must be at least 3 characters');
     }
 
-    dispute.resolve(command.resolution, command.resolvedBy);
-    await this.disputeRepo.save(dispute);
+    const dispute = await this.disputes.findById(command.disputeId);
+    if (!dispute) {
+      throw new NotFoundException(`Dispute not found: ${command.disputeId}`);
+    }
+
+    const [, event] = dispute.resolve(command.resolution, command.resolvedBy);
+    await this.disputes.save(dispute);
+    this.events.publish(event as object);
     return dispute;
   }
 }

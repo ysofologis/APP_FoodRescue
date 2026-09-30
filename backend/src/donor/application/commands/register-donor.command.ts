@@ -1,9 +1,9 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { DonorAggregate } from '../../domain/aggregates/donor.aggregate';
-import { DonorRepository as DonorRepoInterface } from '../../domain/repositories/donor.repository';
+import { DonorRepository } from '../../domain/repositories/donor.repository';
 import { DonorValidationService } from '../../domain/services/donor-validation.service';
+import { DonorCreatedEvent } from '../../domain/events/donor-created.event';
 
 export class RegisterDonorCommand {
   constructor(
@@ -15,22 +15,29 @@ export class RegisterDonorCommand {
   ) {}
 }
 
+@Injectable()
 @CommandHandler(RegisterDonorCommand)
 export class RegisterDonorCommandHandler
-  implements ICommandHandler<RegisterDonorCommand>
+  implements ICommandHandler<RegisterDonorCommand, DonorAggregate>
 {
   constructor(
-    @InjectRepository(DonorAggregate)
-    private readonly donorRepo: Repository<DonorAggregate>,
+    private readonly donors: DonorRepository,
+    private readonly events: EventBus,
   ) {}
 
   async execute(command: RegisterDonorCommand): Promise<DonorAggregate> {
-    DonorValidationService.validateOnboarding(
-      command.name,
-      command.contactEmail,
-    );
+    try {
+      DonorValidationService.validateOnboarding(
+        command.name,
+        command.contactEmail,
+      );
+    } catch (err) {
+      throw new BadRequestException(
+        err instanceof Error ? err.message : 'Invalid donor onboarding',
+      );
+    }
 
-    const [donor] = DonorAggregate.create(
+    const [donor, event] = DonorAggregate.create(
       command.name,
       command.contactEmail,
       command.businessLicense,
@@ -38,7 +45,8 @@ export class RegisterDonorCommandHandler
       command.address,
     );
 
-    await this.donorRepo.save(donor);
+    await this.donors.save(donor);
+    this.events.publish(event as object);
     return donor;
   }
 }

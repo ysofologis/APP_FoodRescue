@@ -1,23 +1,19 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { RecipientAggregate } from '../../recipient/domain/aggregates/recipient.aggregate';
-import { RecipientRepository as RecipientRepoInterface } from '../../recipient/domain/repositories/recipient.repository';
+import { Injectable } from '@nestjs/common';
+import { RecipientLookupPort } from '../ports/recipient-lookup.port';
 
 export class GetRecipientByIdQuery {
   constructor(public readonly recipientId: string) {}
 }
 
+@Injectable()
 @QueryHandler(GetRecipientByIdQuery)
 export class GetRecipientByIdQueryHandler
   implements IQueryHandler<GetRecipientByIdQuery>
 {
-  constructor(
-    @InjectRepository(RecipientAggregate)
-    private readonly recipientRepo: Repository<RecipientAggregate>,
-  ) {}
+  constructor(private readonly recipients: RecipientLookupPort) {}
 
-  async execute(query: GetRecipientByIdQuery): Promise<RecipientAggregate | null> {
-    return this.recipientRepo.findOne({ where: { id: query.recipientId } });
+  async execute(query: GetRecipientByIdQuery) {
+    return this.recipients.findById(query.recipientId);
   }
 }

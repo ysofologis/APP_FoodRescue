@@ -1,26 +1,31 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { DistributionRunAggregate } from '../../domain/aggregates/distribution-run.aggregate';
-import { DistributionRunRepository as DistributionRunRepoInterface } from '../../domain/repositories/distribution-run.repository';
+import { DistributionRunRepository } from '../../domain/repositories/distribution-run.repository';
 
 export class ListDistributionRunsQuery {
-  constructor(public readonly status?: string) {}
+  constructor(
+    public readonly driverId?: string,
+    public readonly status?: string,
+  ) {}
 }
 
+@Injectable()
 @QueryHandler(ListDistributionRunsQuery)
 export class ListDistributionRunsQueryHandler
-  implements IQueryHandler<ListDistributionRunsQuery>
+  implements IQueryHandler<ListDistributionRunsQuery, DistributionRunAggregate[]>
 {
-  constructor(
-    @InjectRepository(DistributionRunAggregate)
-    private readonly runRepo: Repository<DistributionRunAggregate>,
-  ) {}
+  constructor(private readonly runs: DistributionRunRepository) {}
 
-  async execute(query: ListDistributionRunsQuery): Promise<DistributionRunAggregate[]> {
-    if (query.status) {
-      return this.runRepo.find({ where: { status: query.status } });
+  async execute(
+    query: ListDistributionRunsQuery,
+  ): Promise<DistributionRunAggregate[]> {
+    if (query.driverId) {
+      return this.runs.findByDriverId(query.driverId);
     }
-    return this.runRepo.find();
+    if (query.status) {
+      return this.runs.findByStatus(query.status);
+    }
+    return this.runs.findByStatus('SCHEDULED');
   }
 }

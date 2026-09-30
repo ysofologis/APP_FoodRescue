@@ -1,36 +1,19 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ImpactMetricAggregate } from '../../analytics/domain/aggregates/impact-metric.aggregate';
-import { ImpactMetricRepository as ImpactMetricRepoInterface } from '../../analytics/domain/repositories/impact-metric.repository';
+import { Injectable } from '@nestjs/common';
+import { ImpactReadPort } from '../ports/impact-read.port';
 
 export class GetDonorImpactQuery {
   constructor(public readonly donorId: string) {}
 }
 
+@Injectable()
 @QueryHandler(GetDonorImpactQuery)
 export class GetDonorImpactQueryHandler
   implements IQueryHandler<GetDonorImpactQuery>
 {
-  constructor(
-    @InjectRepository(ImpactMetricAggregate)
-    private readonly metricRepo: Repository<ImpactMetricAggregate>,
-  ) {}
+  constructor(private readonly impact: ImpactReadPort) {}
 
-  async execute(query: GetDonorImpactQuery): Promise<{
-    metrics: ImpactMetricAggregate[];
-    totalMealsSaved: number;
-    totalCo2Avoided: number;
-    totalKgDelivered: number;
-  }> {
-    const metrics = await this.metricRepo.findByDonorId(query.donorId);
-    const aggregate = await this.metricRepo.getAggregateMetrics();
-
-    return {
-      metrics,
-      totalMealsSaved: aggregate.totalMealsSaved,
-      totalCo2Avoided: aggregate.totalCo2Avoided,
-      totalKgDelivered: aggregate.totalKgDelivered,
-    };
+  async execute(query: GetDonorImpactQuery) {
+    return this.impact.getDonorImpact(query.donorId);
   }
 }

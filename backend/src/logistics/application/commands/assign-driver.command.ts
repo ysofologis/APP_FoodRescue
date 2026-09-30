@@ -1,8 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DistributionRunAggregate } from '../../domain/aggregates/distribution-run.aggregate';
-import { DistributionRunRepository as DistributionRunRepoInterface } from '../../domain/repositories/distribution-run.repository';
+import { DistributionRunRepository } from '../../domain/repositories/distribution-run.repository';
 
 export class AssignDriverCommand {
   constructor(
@@ -11,24 +10,24 @@ export class AssignDriverCommand {
   ) {}
 }
 
+@Injectable()
 @CommandHandler(AssignDriverCommand)
 export class AssignDriverCommandHandler
-  implements ICommandHandler<AssignDriverCommand>
+  implements ICommandHandler<AssignDriverCommand, DistributionRunAggregate>
 {
-  constructor(
-    @InjectRepository(DistributionRunAggregate)
-    private readonly runRepo: Repository<DistributionRunAggregate>,
-  ) {}
+  constructor(private readonly runs: DistributionRunRepository) {}
 
   async execute(command: AssignDriverCommand): Promise<DistributionRunAggregate> {
-    const run = await this.runRepo.findOne({ where: { id: command.runId } });
-
+    const run = await this.runs.findById(command.runId);
     if (!run) {
-      throw new Error(`Distribution run not found: ${command.runId}`);
+      throw new NotFoundException(
+        `Distribution run not found: ${command.runId}`,
+      );
     }
 
+    // assignDriver() throws on invariant violation (only SCHEDULED runs can be reassigned).
     run.assignDriver(command.driverId);
-    await this.runRepo.save(run);
+    await this.runs.save(run);
     return run;
   }
 }

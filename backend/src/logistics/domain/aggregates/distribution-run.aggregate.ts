@@ -1,5 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { DistributionRunCreatedEvent } from '../events/distribution-run-created.event';
+import { PickupConfirmedEvent } from '../events/pickup-confirmed.event';
+import { DeliveryCompletedEvent } from '../events/delivery-completed.event';
 
 @Entity('distribution_runs')
 export class DistributionRunAggregate {
@@ -36,7 +39,7 @@ export class DistributionRunAggregate {
     listingIds: string[],
     scheduledPickup: Date,
     routeNotes?: string,
-  ): [DistributionRunAggregate, any] {
+  ): [DistributionRunAggregate, DistributionRunCreatedEvent] {
     const run = new DistributionRunAggregate();
     run.id = uuid();
     run.name = name;
@@ -46,7 +49,8 @@ export class DistributionRunAggregate {
     run.routeNotes = routeNotes;
     run.status = 'SCHEDULED';
 
-    return [run, { type: 'distribution.run.created', runId: run.id }];
+    const event = new DistributionRunCreatedEvent(run.id, run.name, run.driverId, run.listingIds);
+    return [run, event];
   }
 
   assignDriver(driverId: string): void {
@@ -56,20 +60,24 @@ export class DistributionRunAggregate {
     this.driverId = driverId;
   }
 
-  confirmPickup(): void {
+  confirmPickup(): [DistributionRunAggregate, PickupConfirmedEvent] {
     if (this.status !== 'SCHEDULED') {
       throw new Error('Run must be scheduled before pickup confirmation');
     }
     this.status = 'IN_TRANSIT';
     this.pickedUpAt = new Date();
+    const event = new PickupConfirmedEvent(this.id, this.listingIds, this.pickedUpAt);
+    return [this, event];
   }
 
-  confirmDelivery(): void {
+  confirmDelivery(): [DistributionRunAggregate, DeliveryCompletedEvent] {
     if (this.status !== 'IN_TRANSIT') {
       throw new Error('Run must be in transit before delivery confirmation');
     }
     this.status = 'DELIVERED';
     this.deliveredAt = new Date();
+    const event = new DeliveryCompletedEvent(this.id, this.listingIds, this.deliveredAt);
+    return [this, event];
   }
 
   cancel(reason: string): void {

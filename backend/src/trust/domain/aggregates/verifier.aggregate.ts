@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { VerificationCompletedEvent } from '../events/verification-completed.event';
 
 @Entity('verifiers')
 export class VerifierAggregate {
@@ -18,7 +19,7 @@ export class VerifierAggregate {
   @Column({ type: 'simple-json', default: [] })
   permissions: string[];
 
-  @OneToMany(() => VerifierAuditEntry, (entry) => entry.verifier)
+  @OneToMany(() => VerifierAuditEntry, (entry) => entry.verifierId)
   auditEntries: VerifierAuditEntry[];
 
   static create(
@@ -52,6 +53,33 @@ export class VerifierAggregate {
 
   removePermission(permission: string): void {
     this.permissions = this.permissions.filter((p) => p !== permission);
+  }
+
+  /**
+   * Records a verification decision against an organization in another context.
+   * The verifier's audit log is the source of truth for the trust context;
+   * the target organization's status change is signaled by the returned
+   * domain event and handled by a downstream subscriber.
+   */
+  recordVerification(
+    organizationId: string,
+    organizationType: 'DONOR' | 'RECIPIENT',
+    verified: boolean,
+    notes?: string,
+  ): [VerifierAggregate, VerificationCompletedEvent] {
+    if (!this.active) {
+      throw new Error('Verifier is not active');
+    }
+    const event = new VerificationCompletedEvent(
+      this.id,
+      organizationId,
+      organizationType,
+      verified,
+    );
+    // Notes are logged externally via the audit entry write; the aggregate
+    // carries the decision only.
+    void notes;
+    return [this, event];
   }
 }
 

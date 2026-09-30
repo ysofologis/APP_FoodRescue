@@ -1,42 +1,41 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { VerifierAggregate } from '../../domain/aggregates/verifier.aggregate';
-import { VerifierRepository as VerifierRepoInterface } from '../../domain/repositories/verifier.repository';
+import { VerifierRepository } from '../../domain/repositories/verifier.repository';
 
 export class VerifyOrganizationCommand {
   constructor(
     public readonly verifierId: string,
     public readonly organizationId: string,
-    public readonly organizationType: string,
+    public readonly organizationType: 'DONOR' | 'RECIPIENT',
     public readonly notes?: string,
   ) {}
 }
 
+@Injectable()
 @CommandHandler(VerifyOrganizationCommand)
 export class VerifyOrganizationCommandHandler
-  implements ICommandHandler<VerifyOrganizationCommand>
+  implements ICommandHandler<VerifyOrganizationCommand, VerifierAggregate>
 {
   constructor(
-    @InjectRepository(VerifierAggregate)
-    private readonly verifierRepo: Repository<VerifierAggregate>,
+    private readonly verifiers: VerifierRepository,
+    private readonly events: EventBus,
   ) {}
 
   async execute(command: VerifyOrganizationCommand): Promise<VerifierAggregate> {
-    const verifier = await this.verifierRepo.findOne({
-      where: { id: command.verifierId },
-    });
-
+    const verifier = await this.verifiers.findById(command.verifierId);
     if (!verifier) {
-      throw new Error(`Verifier not found: ${command.verifierId}`);
+      throw new NotFoundException(`Verifier not found: ${command.verifierId}`);
     }
 
-    if (!verifier.active) {
-      throw new Error('Verifier is not active');
-    }
-
-    // In a real implementation, this would update the recipient/donor status
-    // For now, we just record the verification action
+    const [, event] = verifier.recordVerification(
+      command.organizationId,
+      command.organizationType,
+      true,
+      command.notes,
+    );
+    await this.verifiers.save(verifier);
+    this.events.publish(event as object);
     return verifier;
   }
 }

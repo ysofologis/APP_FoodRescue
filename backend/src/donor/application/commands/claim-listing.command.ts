@@ -1,10 +1,7 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { FoodListing } from '../../domain/aggregates/food-listing.aggregate';
 import { FoodListingRepository } from '../../domain/repositories/food-listing.repository';
-import { FoodListingClaimedEvent } from '../../domain/events/food-listing-claimed.event';
-import { DonorEventPublisher } from '../../infrastructure/event-publishers/donor-event-publisher';
 
 export class ClaimListingCommand {
   constructor(
@@ -13,35 +10,29 @@ export class ClaimListingCommand {
   ) {}
 }
 
+@Injectable()
 @CommandHandler(ClaimListingCommand)
 export class ClaimListingCommandHandler
-  implements ICommandHandler<ClaimListingCommand>
+  implements ICommandHandler<ClaimListingCommand, FoodListing>
 {
   constructor(
-    @InjectRepository(FoodListing)
-    private readonly listingRepo: Repository<FoodListing>,
-    private readonly eventPublisher: DonorEventPublisher,
+    private readonly listings: FoodListingRepository,
+    private readonly events: EventBus,
   ) {}
 
   async execute(command: ClaimListingCommand): Promise<FoodListing> {
-    const listing = await this.listingRepo.findOne({
-      where: { id: command.listingId },
-    });
-
+    const listing = await this.listings.findById(command.listingId);
     if (!listing) {
-      throw new Error(`Food listing not found: ${command.listingId}`);
+      throw new NotFoundException(
+        `Food listing not found: ${command.listingId}`,
+      );
     }
 
-    listing.claim(command.recipientId);
-    await this.listingRepo.save(listing);
-
-    const event = new FoodListingClaimedEvent(
-      listing.id,
-      command.recipientId,
-      new Date(),
-    );
-    this.eventPublisher.publishFoodListingClaimed(event);
-
+    // claim() throws on invariant violation (wrong status, expired window).
+    // Domain rule, not a transport-layer concern — let it propagate.
+    const [, event] = listing.claim(command.recipientId);
+    await this.listings.save(listing);
+    this.events.publish(event as object);
     return listing;
   }
 }

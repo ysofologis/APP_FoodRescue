@@ -1,23 +1,19 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { DistributionRunAggregate } from '../../logistics/domain/aggregates/distribution-run.aggregate';
-import { DistributionRunRepository as DistributionRunRepoInterface } from '../../logistics/domain/repositories/distribution-run.repository';
+import { Injectable } from '@nestjs/common';
+import { DriverRunsReadPort } from '../ports/driver-runs-read.port';
 
 export class GetDriverRunsQuery {
   constructor(public readonly driverId: string) {}
 }
 
+@Injectable()
 @QueryHandler(GetDriverRunsQuery)
 export class GetDriverRunsQueryHandler
   implements IQueryHandler<GetDriverRunsQuery>
 {
-  constructor(
-    @InjectRepository(DistributionRunAggregate)
-    private readonly runRepo: Repository<DistributionRunAggregate>,
-  ) {}
+  constructor(private readonly runs: DriverRunsReadPort) {}
 
-  async execute(query: GetDriverRunsQuery): Promise<DistributionRunAggregate[]> {
-    return this.runRepo.findByDriverId(query.driverId);
+  async execute(query: GetDriverRunsQuery) {
+    return this.runs.findByDriverId(query.driverId);
   }
 }

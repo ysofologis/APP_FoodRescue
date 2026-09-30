@@ -1,8 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { DistributionRunAggregate } from '../../domain/aggregates/distribution-run.aggregate';
-import { DistributionRunRepository as DistributionRunRepoInterface } from '../../domain/repositories/distribution-run.repository';
+import { DistributionRunRepository } from '../../domain/repositories/distribution-run.repository';
 
 export class CancelRunCommand {
   constructor(
@@ -11,24 +10,24 @@ export class CancelRunCommand {
   ) {}
 }
 
+@Injectable()
 @CommandHandler(CancelRunCommand)
 export class CancelRunCommandHandler
-  implements ICommandHandler<CancelRunCommand>
+  implements ICommandHandler<CancelRunCommand, DistributionRunAggregate>
 {
-  constructor(
-    @InjectRepository(DistributionRunAggregate)
-    private readonly runRepo: Repository<DistributionRunAggregate>,
-  ) {}
+  constructor(private readonly runs: DistributionRunRepository) {}
 
   async execute(command: CancelRunCommand): Promise<DistributionRunAggregate> {
-    const run = await this.runRepo.findOne({ where: { id: command.runId } });
-
+    const run = await this.runs.findById(command.runId);
     if (!run) {
-      throw new Error(`Distribution run not found: ${command.runId}`);
+      throw new NotFoundException(`Distribution run not found: ${command.runId}`);
+    }
+    if (!command.reason || command.reason.trim().length < 3) {
+      throw new BadRequestException('Cancel reason must be at least 3 characters');
     }
 
     run.cancel(command.reason);
-    await this.runRepo.save(run);
+    await this.runs.save(run);
     return run;
   }
 }
