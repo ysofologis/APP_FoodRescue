@@ -1,0 +1,23 @@
+<div class="impact-page">
+  <h2>Public Impact Dashboard</h2>
+  <p class="context-label">Bounded Context: Analytics — public view</p>
+
+  <section class="card stats-card">
+    @if (loading()) {
+      <p>Loading…</p>
+    } @else {
+      @if (impact(); as i) {
+        <div class="stats">
+          <div><span class="num">{{ i.totalMealsSaved | number }}</span><span class="caption">meals saved</span></div>
+          <div><span class="num">{{ i.totalCo2Avoided | number:'1.0-1' }}</span><span class="caption">kg CO₂ avoided</span></div>
+          <div><span class="num">{{ i.totalKgDelivered | number:'1.0-1' }}</span><span class="caption">kg delivered</span></div>
+        </div>
+        <p class="footnote">
+          Numbers reflect cumulative impact across all participating donors.
+        </p>
+      } @else if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+    }
+  </section>
+</div>

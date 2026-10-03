@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/shared/public-impact/public-impact.page.css"],
+  "sourcesContent": [".impact-page {\n  max-width: 720px;\n  margin: 24px auto;\n}\n\n.card {\n  padding: 24px;\n  border: 1px solid #ddd;\n  border-radius: 8px;\n  background: #fff;\n}\n\n.context-label {\n  color: #666;\n  font-size: 0.9em;\n}\n\n.stats {\n  display: flex;\n  gap: 48px;\n  justify-content: space-around;\n}\n\n.stats > div {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n\n.num {\n  font-size: 2.4em;\n  font-weight: 600;\n  color: #1f7a3a;\n}\n\n.caption {\n  font-size: 0.9em;\n  color: #666;\n}\n\n.footnote {\n  margin-top: 16px;\n  font-size: 0.85em;\n  color: #888;\n  text-align: center;\n}\n\n.error {\n  background: #fee;\n  color: #900;\n  padding: 8px;\n  border-radius: 4px;\n}"],
+  "mappings": ";AAAA,CAAC;AACC,aAAW;AACX,UAAQ,KAAK;AACf;AAEA,CAAC;AACC,WAAS;AACT,UAAQ,IAAI,MAAM;AAClB,iBAAe;AACf,cAAY;AACd;AAEA,CAAC;AACC,SAAO;AACP,aAAW;AACb;AAEA,CAAC;AACC,WAAS;AACT,OAAK;AACL,mBAAiB;AACnB;AAEA,CANC,MAMM,EAAE;AACP,WAAS;AACT,kBAAgB;AAChB,eAAa;AACf;AAEA,CAAC;AACC,aAAW;AACX,eAAa;AACb,SAAO;AACT;AAEA,CAAC;AACC,aAAW;AACX,SAAO;AACT;AAEA,CAAC;AACC,cAAY;AACZ,aAAW;AACX,SAAO;AACP,cAAY;AACd;AAEA,CAAC;AACC,cAAY;AACZ,SAAO;AACP,WAAS;AACT,iBAAe;AACjB;",
+  "names": []
+}

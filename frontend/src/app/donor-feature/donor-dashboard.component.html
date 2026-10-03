@@ -1,0 +1,53 @@
+<div class="donor-dashboard">
+  <h2>Donor Dashboard</h2>
+  <p class="context-label">Bounded Context: Donor Management</p>
+
+  @if (donorId(); as id) {
+    <section class="card">
+      <h3>Your impact</h3>
+      @if (impact(); as i) {
+        <div class="stats">
+          <div><span class="num">{{ i.totalMealsSaved | number }}</span><span class="caption">meals saved</span></div>
+          <div><span class="num">{{ i.totalCo2Avoided | number:'1.0-1' }}</span><span class="caption">kg CO₂ avoided</span></div>
+          <div><span class="num">{{ i.totalKgDelivered | number:'1.0-1' }}</span><span class="caption">kg delivered</span></div>
+        </div>
+      } @else if (impactError()) {
+        <p class="error">{{ impactError() }}</p>
+      } @else {
+        <p>Loading impact…</p>
+      }
+    </section>
+
+    <section class="card">
+      <h3>Your listings</h3>
+      @if (listingsError()) {
+        <p class="error">{{ listingsError() }}</p>
+      } @else if (listings().length === 0) {
+        <p>No listings yet. Publish one below.</p>
+      } @else {
+        <table>
+          <thead>
+            <tr><th>Title</th><th>Category</th><th>Qty</th><th>Status</th><th>Pickup window</th></tr>
+          </thead>
+          <tbody>
+            @for (l of listings(); track l.id) {
+              <tr>
+                <td>{{ l.title }}</td>
+                <td>{{ l.category }}</td>
+                <td>{{ l.quantity.value }} {{ l.quantity.unit }}</td>
+                <td><span class="status status-{{ l.status.toLowerCase() }}">{{ l.status }}</span></td>
+                <td>{{ l.pickupWindowStart | date:'short' }} → {{ l.pickupWindowEnd | date:'short' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </section>
+
+    <section class="card">
+      <app-create-listing-form></app-create-listing-form>
+    </section>
+  } @else {
+    <p>Sign in to view your donor dashboard.</p>
+  }
+</div>

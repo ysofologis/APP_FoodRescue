@@ -1,0 +1,51 @@
+<div class="register-card">
+  <h2>Register as a Recipient Organization</h2>
+  <p class="hint">
+    Create your recipient organization. Once verified, you'll be able
+    to claim donations from the marketplace.
+  </p>
+  <form (ngSubmit)="submit()" #f="ngForm" class="form-grid">
+    <label>
+      Organization name
+      <input name="name" [(ngModel)]="model.name" required minlength="2" maxlength="255" />
+    </label>
+    <label>
+      Organization type
+      <select name="orgType" [(ngModel)]="model.orgType" required>
+        <option value="SHELTER">Shelter</option>
+        <option value="FOOD_BANK">Food bank</option>
+        <option value="COMMUNITY_KITCHEN">Community kitchen</option>
+        <option value="NGO">NGO</option>
+        <option value="OTHER">Other</option>
+      </select>
+    </label>
+    <label>
+      Contact email
+      <input type="email" name="contactEmail" [(ngModel)]="model.contactEmail" required />
+    </label>
+    <label>
+      Contact phone
+      <input name="contactPhone" [(ngModel)]="model.contactPhone" />
+    </label>
+    <label>
+      Address
+      <input name="address" [(ngModel)]="model.address" />
+    </label>
+    <label>
+      Legal documents reference (optional)
+      <input name="legalDocsRef" [(ngModel)]="model.legalDocsRef" />
+    </label>
+    <button type="submit" [disabled]="submitting()">
+      {{ submitting() ? 'Registering…' : 'Register' }}
+    </button>
+  </form>
+  @if (error()) { <p class="error">{{ error() }}</p> }
+  @if (lastResult(); as r) {
+    <p class="success">
+      Recipient created: <code>{{ r.id }}</code>. Status: {{ r.status }}.
+      A platform operator will verify the organization. Auth-account
+      provisioning is not yet wired on the backend.
+    </p>
+    <p><a routerLink="/login">Go to login</a></p>
+  }
+</div>

@@ -7,6 +7,7 @@ export { ListingResponseDto } from './listing-response.dto';
 export {
   DonorImpactResponseDto,
   PublicImpactResponseDto,
+  RecipientImpactResponseDto,
 } from './impact-response.dto';
 export { RecipientLookupResponseDto } from './recipient-lookup.dto';
 export {

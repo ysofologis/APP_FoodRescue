@@ -1,0 +1,66 @@
+.register-card {
+  max-width: 480px;
+  margin: 32px auto;
+  padding: 24px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.hint {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.form-grid {
+  display: grid;
+  gap: 8px;
+}
+
+label {
+  display: block;
+  font-size: 0.9em;
+}
+
+input,
+select {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  box-sizing: border-box;
+}
+
+button {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #1f7a3a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  background: #fee;
+  color: #900;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.success {
+  background: #efe;
+  color: #060;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+code {
+  font-family: monospace;
+  font-size: 0.85em;
+}

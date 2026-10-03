@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/donor-feature/create-listing-form.component.css"],
+  "sourcesContent": [".form-grid {\n  display: grid;\n  gap: 8px;\n  max-width: 640px;\n}\n\nlabel {\n  display: block;\n  font-size: 0.9em;\n}\n\ninput,\nselect,\ntextarea {\n  display: block;\n  width: 100%;\n  padding: 6px 8px;\n  box-sizing: border-box;\n}\n\n.row {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 8px;\n}\n\nbutton {\n  padding: 8px 16px;\n  background: #1f7a3a;\n  color: #fff;\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n  width: fit-content;\n}\n\nbutton[disabled] {\n  opacity: 0.5;\n  cursor: not-allowed;\n}\n\n.hint {\n  color: #666;\n  font-size: 0.9em;\n}\n\n.id {\n  font-family: monospace;\n  font-size: 0.85em;\n}\n\n.error {\n  background: #fee;\n  color: #900;\n  padding: 8px;\n  border-radius: 4px;\n}\n\n.success {\n  background: #efe;\n  color: #060;\n  padding: 8px;\n  border-radius: 4px;\n}"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,OAAK;AACL,aAAW;AACb;AAEA;AACE,WAAS;AACT,aAAW;AACb;AAEA;AACA;AACA;AACE,WAAS;AACT,SAAO;AACP,WAAS,IAAI;AACb,cAAY;AACd;AAEA,CAAC;AACC,WAAS;AACT,yBAAuB,IAAI,IAAI;AAC/B,OAAK;AACP;AAEA;AACE,WAAS,IAAI;AACb,cAAY;AACZ,SAAO;AACP,UAAQ;AACR,iBAAe;AACf,UAAQ;AACR,SAAO;AACT;AAEA,MAAM,CAAC;AACL,WAAS;AACT,UAAQ;AACV;AAEA,CAAC;AACC,SAAO;AACP,aAAW;AACb;AAEA,CAAC;AACC,eAAa;AACb,aAAW;AACb;AAEA,CAAC;AACC,cAAY;AACZ,SAAO;AACP,WAAS;AACT,iBAAe;AACjB;AAEA,CAAC;AACC,cAAY;AACZ,SAAO;AACP,WAAS;AACT,iBAAe;AACjB;",
+  "names": []
+}

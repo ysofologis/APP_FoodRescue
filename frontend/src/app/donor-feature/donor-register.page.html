@@ -1,0 +1,42 @@
+<div class="register-card">
+  <h2>Register as a Donor</h2>
+  <p class="hint">
+    Create your donor organization. Once a platform operator provisions
+    an auth account, you'll use the contact email below to log in.
+  </p>
+  <form (ngSubmit)="submit()" #f="ngForm" class="form-grid">
+    <label>
+      Organization name
+      <input name="name" [(ngModel)]="model.name" required minlength="2" maxlength="255" />
+    </label>
+    <label>
+      Contact email
+      <input type="email" name="contactEmail" [(ngModel)]="model.contactEmail" required />
+    </label>
+    <label>
+      Contact phone
+      <input name="contactPhone" [(ngModel)]="model.contactPhone" />
+    </label>
+    <label>
+      Address
+      <input name="address" [(ngModel)]="model.address" />
+    </label>
+    <label>
+      Business license (optional)
+      <input name="businessLicense" [(ngModel)]="model.businessLicense" />
+    </label>
+    <button type="submit" [disabled]="submitting()">
+      {{ submitting() ? 'Registering…' : 'Register' }}
+    </button>
+  </form>
+  @if (error()) { <p class="error">{{ error() }}</p> }
+  @if (lastResult(); as r) {
+    <p class="success">
+      Donor created: <code>{{ r.id }}</code>. Status: {{ r.status }}.
+      Auth-account provisioning is not yet wired on the backend, so this
+      organization can't sign in until a platform operator creates the
+      auth account.
+    </p>
+    <p><a routerLink="/login">Go to login</a></p>
+  }
+</div>

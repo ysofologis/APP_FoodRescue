@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/recipient-feature/recipient-dashboard.component.css"],
+  "sourcesContent": [".card {\n  margin: 16px 0;\n  padding: 16px;\n  border: 1px solid #ddd;\n  border-radius: 8px;\n  background: #fff;\n}\n\n.context-label {\n  color: #666;\n  font-size: 0.9em;\n}\n\n.stats {\n  display: flex;\n  gap: 32px;\n}\n\n.stats > div {\n  display: flex;\n  flex-direction: column;\n}\n\n.num {\n  font-size: 2em;\n  font-weight: 600;\n  color: #1f7a3a;\n}\n\n.caption {\n  font-size: 0.85em;\n  color: #666;\n}\n\ntable {\n  width: 100%;\n  border-collapse: collapse;\n}\n\nth,\ntd {\n  padding: 6px 8px;\n  text-align: left;\n  border-bottom: 1px solid #eee;\n}\n\nbutton {\n  padding: 4px 12px;\n  background: #1f7a3a;\n  color: #fff;\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n}\n\nbutton[disabled] {\n  opacity: 0.5;\n  cursor: not-allowed;\n}\n\n.error {\n  background: #fee;\n  color: #900;\n  padding: 8px;\n  border-radius: 4px;\n}"],
+  "mappings": ";AAAA,CAAC;AACC,UAAQ,KAAK;AACb,WAAS;AACT,UAAQ,IAAI,MAAM;AAClB,iBAAe;AACf,cAAY;AACd;AAEA,CAAC;AACC,SAAO;AACP,aAAW;AACb;AAEA,CAAC;AACC,WAAS;AACT,OAAK;AACP;AAEA,CALC,MAKM,EAAE;AACP,WAAS;AACT,kBAAgB;AAClB;AAEA,CAAC;AACC,aAAW;AACX,eAAa;AACb,SAAO;AACT;AAEA,CAAC;AACC,aAAW;AACX,SAAO;AACT;AAEA;AACE,SAAO;AACP,mBAAiB;AACnB;AAEA;AACA;AACE,WAAS,IAAI;AACb,cAAY;AACZ,iBAAe,IAAI,MAAM;AAC3B;AAEA;AACE,WAAS,IAAI;AACb,cAAY;AACZ,SAAO;AACP,UAAQ;AACR,iBAAe;AACf,UAAQ;AACV;AAEA,MAAM,CAAC;AACL,WAAS;AACT,UAAQ;AACV;AAEA,CAAC;AACC,cAAY;AACZ,SAAO;AACP,WAAS;AACT,iBAAe;AACjB;",
+  "names": []
+}

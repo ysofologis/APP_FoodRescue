@@ -1,0 +1,17 @@
+<header class="app-header">
+  <a class="brand" routerLink="/">🍎 Food Rescue</a>
+  <nav>
+    <a routerLink="/impact">Public impact</a>
+    <a routerLink="/donor">Donor</a>
+    <a routerLink="/recipient">Recipient</a>
+    @if (auth.isAuthenticated()) {
+      <span class="who">{{ auth.role() }} · {{ auth.linkedId() }}</span>
+      <button type="button" (click)="logout()">Log out</button>
+    } @else {
+      <a routerLink="/login">Log in</a>
+    }
+  </nav>
+</header>
+<main>
+  <router-outlet></router-outlet>
+</main>

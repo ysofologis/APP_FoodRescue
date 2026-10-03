@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/core/auth/login/login.page.css"],
+  "sourcesContent": [".login-card {\n  max-width: 360px;\n  margin: 64px auto;\n  padding: 24px;\n  border: 1px solid #ddd;\n  border-radius: 8px;\n  background: #fff;\n}\n\n.hint {\n  color: #666;\n  font-size: 0.9em;\n}\n\nlabel {\n  display: block;\n  margin: 12px 0;\n}\n\ninput {\n  display: block;\n  width: 100%;\n  margin-top: 4px;\n  padding: 6px 8px;\n  box-sizing: border-box;\n}\n\nbutton {\n  margin-top: 12px;\n  padding: 8px 16px;\n  background: #1f7a3a;\n  color: #fff;\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n}\n\nbutton[disabled] {\n  opacity: 0.5;\n  cursor: not-allowed;\n}\n\n.error {\n  margin-top: 12px;\n  padding: 8px;\n  background: #fee;\n  color: #900;\n  border-radius: 4px;\n}\n\n.footer {\n  margin-top: 16px;\n  font-size: 0.9em;\n  color: #555;\n}"],
+  "mappings": ";AAAA,CAAC;AACC,aAAW;AACX,UAAQ,KAAK;AACb,WAAS;AACT,UAAQ,IAAI,MAAM;AAClB,iBAAe;AACf,cAAY;AACd;AAEA,CAAC;AACC,SAAO;AACP,aAAW;AACb;AAEA;AACE,WAAS;AACT,UAAQ,KAAK;AACf;AAEA;AACE,WAAS;AACT,SAAO;AACP,cAAY;AACZ,WAAS,IAAI;AACb,cAAY;AACd;AAEA;AACE,cAAY;AACZ,WAAS,IAAI;AACb,cAAY;AACZ,SAAO;AACP,UAAQ;AACR,iBAAe;AACf,UAAQ;AACV;AAEA,MAAM,CAAC;AACL,WAAS;AACT,UAAQ;AACV;AAEA,CAAC;AACC,cAAY;AACZ,WAAS;AACT,cAAY;AACZ,SAAO;AACP,iBAAe;AACjB;AAEA,CAAC;AACC,cAAY;AACZ,aAAW;AACX,SAAO;AACT;",
+  "names": []
+}

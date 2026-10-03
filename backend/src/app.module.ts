@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
@@ -10,6 +9,7 @@ import { RecipientModule } from './recipient/recipient.module';
 import { LogisticsModule } from './logistics/logistics.module';
 import { TrustModule } from './trust/trust.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { AuthModule } from './auth/auth.module';
 import { DomainErrorFilter } from './shared/filters/domain-error.filter';
 
 @Module({
@@ -18,7 +18,6 @@ import { DomainErrorFilter } from './shared/filters/domain-error.filter';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    EventEmitterModule.forRoot(),
     CqrsModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -36,6 +35,7 @@ import { DomainErrorFilter } from './shared/filters/domain-error.filter';
     LogisticsModule,
     TrustModule,
     AnalyticsModule,
+    AuthModule,
   ],
   providers: [
     {

@@ -1,0 +1,63 @@
+.card {
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.context-label {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.stats {
+  display: flex;
+  gap: 32px;
+}
+
+.stats > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.num {
+  font-size: 2em;
+  font-weight: 600;
+  color: #1f7a3a;
+}
+
+.caption {
+  font-size: 0.85em;
+  color: #666;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.status {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.status-available { background: #efe; color: #060; }
+.status-claimed { background: #ffd; color: #660; }
+.status-picked_up { background: #ddf; color: #006; }
+.status-distributed { background: #eee; color: #444; }
+
+.error {
+  background: #fee;
+  color: #900;
+  padding: 8px;
+  border-radius: 4px;
+}

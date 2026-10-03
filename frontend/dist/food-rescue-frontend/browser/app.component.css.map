@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/app.component.css"],
+  "sourcesContent": [".app-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 12px 24px;\n  border-bottom: 1px solid #ddd;\n  background: #fff;\n}\n\n.brand {\n  font-weight: 600;\n  text-decoration: none;\n  color: #1f7a3a;\n  font-size: 1.1em;\n}\n\nnav a {\n  margin-right: 16px;\n  text-decoration: none;\n  color: #444;\n}\n\nnav a:hover {\n  text-decoration: underline;\n}\n\nnav button {\n  margin-left: 8px;\n  padding: 4px 10px;\n  background: transparent;\n  border: 1px solid #999;\n  border-radius: 4px;\n  cursor: pointer;\n}\n\n.who {\n  margin-left: 8px;\n  font-size: 0.85em;\n  color: #666;\n  font-family: monospace;\n}\n\nmain {\n  padding: 16px 24px;\n}"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,eAAa;AACb,mBAAiB;AACjB,WAAS,KAAK;AACd,iBAAe,IAAI,MAAM;AACzB,cAAY;AACd;AAEA,CAAC;AACC,eAAa;AACb,mBAAiB;AACjB,SAAO;AACP,aAAW;AACb;AAEA,IAAI;AACF,gBAAc;AACd,mBAAiB;AACjB,SAAO;AACT;AAEA,IAAI,CAAC;AACH,mBAAiB;AACnB;AAEA,IAAI;AACF,eAAa;AACb,WAAS,IAAI;AACb,cAAY;AACZ,UAAQ,IAAI,MAAM;AAClB,iBAAe;AACf,UAAQ;AACV;AAEA,CAAC;AACC,eAAa;AACb,aAAW;AACX,SAAO;AACP,eAAa;AACf;AAEA;AACE,WAAS,KAAK;AAChB;",
+  "names": []
+}

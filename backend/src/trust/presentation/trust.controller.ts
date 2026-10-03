@@ -8,10 +8,13 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  Req,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { Request } from 'express';
 
 import {
   BlacklistOrganizationDto,
@@ -30,6 +33,12 @@ import { ListDisputesQuery } from '../application/queries/list-disputes.query';
 import { VerifierAggregate } from '../domain/aggregates/verifier.aggregate';
 import { DisputeAggregate } from '../domain/aggregates/dispute.aggregate';
 
+import { JwtAuthGuard } from '../../auth/presentation/jwt-auth.guard';
+import { RolesGuard } from '../../auth/presentation/roles.guard';
+import { Roles } from '../../auth/presentation/roles.decorator';
+import { Role } from '../../auth/domain/value-objects/role.vo';
+import { JwtPayload } from '../../auth/application/ports/token-issuer.port';
+
 @UsePipes(
   new ValidationPipe({
     whitelist: true,
@@ -46,15 +55,22 @@ export class TrustController {
 
   @Post('verifications')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.VERIFIER, Role.ADMIN)
   async verifyOrganization(
     @Body() dto: VerifyOrganizationDto,
+    @Req() req: Request & { user?: JwtPayload },
   ): Promise<VerifierResponseDto> {
+    const verifierId = req.user?.linkedId;
+    if (!verifierId) {
+      throw new Error('Authenticated verifier id missing from token');
+    }
     const verifier = await this.commands.execute<
       VerifyOrganizationCommand,
       VerifierAggregate
     >(
       new VerifyOrganizationCommand(
-        dto.verifierId,
+        verifierId,
         dto.organizationId,
         dto.organizationType,
         dto.notes,
@@ -65,26 +81,22 @@ export class TrustController {
 
   @Post('verifications/blacklist')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.VERIFIER, Role.ADMIN)
   async blacklistOrganization(
     @Body() dto: BlacklistOrganizationDto,
+    @Req() req: Request & { user?: JwtPayload },
   ): Promise<VerifierResponseDto> {
-    // Look up the active verifier — controller-level heuristic; the
-    // command itself expects a verifierId, so we route through the
-    // existing query to find one. In production this would come from
-    // authenticated session context.
-    const verifiers = await this.queries.execute(
-      new ListVerificationsQuery(true),
-    );
-    const verifier = verifiers[0];
-    if (!verifier) {
-      throw new Error('No active verifier available to perform blacklist');
+    const verifierId = req.user?.linkedId;
+    if (!verifierId) {
+      throw new Error('Authenticated verifier id missing from token');
     }
     const updated = await this.commands.execute<
       BlacklistOrganizationCommand,
       VerifierAggregate
     >(
       new BlacklistOrganizationCommand(
-        verifier.id,
+        verifierId,
         dto.organizationId,
         'DONOR', // explicit in DTO future iteration; defaulted for now
         dto.reason,

@@ -1,0 +1,39 @@
+<div class="login-card">
+  <h2>Food Rescue — Sign in</h2>
+  <p class="hint">Sign in with the email/password registered for your organization.</p>
+  <form (ngSubmit)="submit()">
+    <label>
+      Email
+      <input
+        type="email"
+        name="email"
+        [(ngModel)]="email"
+        required
+        autocomplete="username"
+      />
+    </label>
+    <label>
+      Password
+      <input
+        type="password"
+        name="password"
+        [(ngModel)]="password"
+        required
+        minlength="8"
+        autocomplete="current-password"
+      />
+    </label>
+    <button type="submit" [disabled]="submitting()">
+      {{ submitting() ? 'Signing in…' : 'Sign in' }}
+    </button>
+  </form>
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+  <p class="footer">
+    Don't have an account?
+    <a routerLink="/donor/register">Register as a donor</a>
+    &nbsp;·&nbsp;
+    <a routerLink="/recipient/register">Register as a recipient</a>
+  </p>
+</div>

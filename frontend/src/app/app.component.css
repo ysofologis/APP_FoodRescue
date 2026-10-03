@@ -1,0 +1,45 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+}
+
+.brand {
+  font-weight: 600;
+  text-decoration: none;
+  color: #1f7a3a;
+  font-size: 1.1em;
+}
+
+nav a {
+  margin-right: 16px;
+  text-decoration: none;
+  color: #444;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+nav button {
+  margin-left: 8px;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid #999;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.who {
+  margin-left: 8px;
+  font-size: 0.85em;
+  color: #666;
+  font-family: monospace;
+}
+
+main {
+  padding: 16px 24px;
+}

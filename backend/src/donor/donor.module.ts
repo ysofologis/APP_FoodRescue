@@ -28,10 +28,10 @@ import { GetVerifiersQueryHandler } from './application/queries/get-verifiers.qu
 
 import { DonorsController } from './presentation/donors.controller';
 
-// ACL adapters — implementations live in their owning contexts and
-// are imported here so we can bind them to the port tokens.
+// ACL adapters — implementations live in their owning contexts.
 import { AnalyticsImpactReadAdapter } from '../analytics/infrastructure/acl/donor-impact-read.adapter';
 import { AnalyticsPublicImpactReadAdapter } from '../analytics/infrastructure/acl/public-impact-read.adapter';
+import { AnalyticsRecipientImpactReadAdapter } from '../analytics/infrastructure/acl/recipient-impact-read.adapter';
 import { RecipientContextLookupAdapter } from '../recipient/infrastructure/acl/recipient-lookup.adapter';
 import { LogisticsDriverRunsReadAdapter } from '../logistics/infrastructure/acl/driver-runs-read.adapter';
 import { TrustVerifiersReadAdapter } from '../trust/infrastructure/acl/verifiers-read.adapter';
@@ -39,21 +39,13 @@ import { TrustVerifiersReadAdapter } from '../trust/infrastructure/acl/verifiers
 // Port tokens (abstract classes) — bound to ACL implementations below.
 import { ImpactReadPort } from './application/ports/impact-read.port';
 import { PublicImpactReadPort } from './application/ports/public-impact-read.port';
+import { RecipientImpactReadPort } from './application/ports/recipient-impact-read.port';
 import { RecipientLookupPort } from './application/ports/recipient-lookup.port';
 import { DriverRunsReadPort } from './application/ports/driver-runs-read.port';
 import { VerifiersReadPort } from './application/ports/verifiers-read.port';
 
-// Stubs retained for tests that want to inject failures without
-// touching real infrastructure. Not bound by default.
-import { StubImpactReadAdapter } from './infrastructure/acl/stub-impact-read.adapter';
-import { StubPublicImpactReadAdapter } from './infrastructure/acl/stub-public-impact-read.adapter';
-import { StubRecipientLookupAdapter } from './infrastructure/acl/stub-recipient-lookup.adapter';
-import { StubDriverRunsReadAdapter } from './infrastructure/acl/stub-driver-runs-read.adapter';
-import { StubVerifiersReadAdapter } from './infrastructure/acl/stub-verifiers-read.adapter';
-
 // Source modules — required so the cross-context adapters registered
-// here can resolve their repository dependencies (which live in their
-// respective bounded contexts).
+// here can resolve their repository dependencies.
 import { AnalyticsModule } from '../analytics/analytics.module';
 import { RecipientModule } from '../recipient/recipient.module';
 import { LogisticsModule } from '../logistics/logistics.module';
@@ -81,18 +73,15 @@ import { TrustModule } from '../trust/trust.module';
       useClass: AnalyticsPublicImpactReadAdapter,
     },
     {
+      provide: RecipientImpactReadPort,
+      useClass: AnalyticsRecipientImpactReadAdapter,
+    },
+    {
       provide: RecipientLookupPort,
       useClass: RecipientContextLookupAdapter,
     },
     { provide: DriverRunsReadPort, useClass: LogisticsDriverRunsReadAdapter },
     { provide: VerifiersReadPort, useClass: TrustVerifiersReadAdapter },
-
-    // Stubs (unused at runtime by default; available for tests)
-    StubImpactReadAdapter,
-    StubPublicImpactReadAdapter,
-    StubRecipientLookupAdapter,
-    StubDriverRunsReadAdapter,
-    StubVerifiersReadAdapter,
 
     // Commands
     RegisterDonorCommandHandler,

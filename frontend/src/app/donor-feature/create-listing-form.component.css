@@ -1,0 +1,64 @@
+.form-grid {
+  display: grid;
+  gap: 8px;
+  max-width: 640px;
+}
+
+label {
+  display: block;
+  font-size: 0.9em;
+}
+
+input,
+select,
+textarea {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  box-sizing: border-box;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+button {
+  padding: 8px 16px;
+  background: #1f7a3a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hint {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.id {
+  font-family: monospace;
+  font-size: 0.85em;
+}
+
+.error {
+  background: #fee;
+  color: #900;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.success {
+  background: #efe;
+  color: #060;
+  padding: 8px;
+  border-radius: 4px;
+}

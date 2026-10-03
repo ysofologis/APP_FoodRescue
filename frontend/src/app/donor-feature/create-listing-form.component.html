@@ -1,0 +1,90 @@
+<h3>Create Food Listing</h3>
+<p class="hint">
+  Donating as <strong>{{ auth.role() }}</strong>
+  @if (auth.linkedId(); as id) { <code class="id">{{ id }}</code> }
+</p>
+
+<form (ngSubmit)="submit()" #f="ngForm" class="form-grid">
+  <label>
+    Title
+    <input name="title" [(ngModel)]="model.title" required minlength="3" maxlength="255" />
+  </label>
+  <label>
+    Description
+    <textarea name="description" [(ngModel)]="model.description" rows="2"></textarea>
+  </label>
+  <div class="row">
+    <label>
+      Category
+      <select name="category" [(ngModel)]="model.category" required>
+        <option value="FRUITS">Fruits</option>
+        <option value="VEGETABLES">Vegetables</option>
+        <option value="DAIRY">Dairy</option>
+        <option value="BAKERY">Bakery</option>
+        <option value="MEAT">Meat</option>
+        <option value="FISH">Fish</option>
+        <option value="CANNED_GOODS">Canned goods</option>
+        <option value="DRY_GOODS">Dry goods</option>
+        <option value="FROZEN">Frozen</option>
+        <option value="BEVERAGES">Beverages</option>
+        <option value="SNACKS">Snacks</option>
+        <option value="OTHER">Other</option>
+      </select>
+    </label>
+    <label>
+      Condition
+      <select name="condition" [(ngModel)]="model.condition" required>
+        <option value="FRESH">Fresh</option>
+        <option value="FROZEN">Frozen</option>
+        <option value="AMBER">Amber</option>
+        <option value="NEAR_EXPIRY">Near expiry</option>
+        <option value="OPENED">Opened</option>
+      </select>
+    </label>
+  </div>
+  <div class="row">
+    <label>
+      Quantity
+      <input type="number" name="quantityValue" [(ngModel)]="model.quantityValue" required min="1" />
+    </label>
+    <label>
+      Unit
+      <input name="quantityUnit" [(ngModel)]="model.quantityUnit" required placeholder="KG / PIECES" />
+    </label>
+    <label>
+      Storage
+      <select name="storageRequirement" [(ngModel)]="model.storageRequirement" required>
+        <option value="AMBIENT">Ambient</option>
+        <option value="REFRIGERATED">Refrigerated</option>
+        <option value="FROZEN">Frozen</option>
+      </select>
+    </label>
+  </div>
+  <div class="row">
+    <label>
+      Pickup window start
+      <input type="datetime-local" name="pickupWindowStart" [(ngModel)]="model.pickupWindowStart" required />
+    </label>
+    <label>
+      Pickup window end
+      <input type="datetime-local" name="pickupWindowEnd" [(ngModel)]="model.pickupWindowEnd" required />
+    </label>
+  </div>
+  <label>
+    Pickup location
+    <input name="pickupLocation" [(ngModel)]="model.pickupLocation" required maxlength="500" />
+  </label>
+  <label>
+    Allergens
+    <input name="allergens" [(ngModel)]="model.allergens" placeholder="e.g., gluten, dairy" />
+  </label>
+
+  <button type="submit" [disabled]="submitting()">
+    {{ submitting() ? 'Publishing…' : 'Publish listing' }}
+  </button>
+
+  @if (error()) { <p class="error">{{ error() }}</p> }
+  @if (lastResult(); as r) {
+    <p class="success">Published: <code>{{ r.id }}</code> — {{ r.status }}</p>
+  }
+</form>

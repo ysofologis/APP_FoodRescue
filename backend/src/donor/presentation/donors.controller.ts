@@ -22,6 +22,7 @@ import {
   DriverRunsResponseDto,
   ListingResponseDto,
   PublicImpactResponseDto,
+  RecipientImpactResponseDto,
   RecipientLookupResponseDto,
   RegisterDonorDto,
   VerifierResponseDto,
@@ -180,11 +181,11 @@ export class DonorsController {
   @Get('recipients/:id/impact')
   async getRecipientImpact(
     @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<DonorImpactResponseDto> {
+  ): Promise<RecipientImpactResponseDto> {
     const summary = await this.queries.execute(
       new GetRecipientImpactQuery(id),
     );
-    return DonorImpactResponseDto.fromSummary(summary);
+    return RecipientImpactResponseDto.fromSummary(summary);
   }
 
   @Get('impact/public')

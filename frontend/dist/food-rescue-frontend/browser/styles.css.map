@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/styles.css"],
+  "sourcesContent": ["/* Global styles for the Food Rescue frontend. */\n\nhtml,\nbody {\n  margin: 0;\n  padding: 0;\n  font-family:\n    -apple-system,\n    BlinkMacSystemFont,\n    'Segoe UI',\n    Roboto,\n    'Helvetica Neue',\n    Arial,\n    sans-serif;\n  background: #f7f9fa;\n  color: #222;\n}\n\n* {\n  box-sizing: border-box;\n}\n\na {\n  color: #1f7a3a;\n}\n\ncode {\n  font-family: 'SF Mono', Monaco, Consolas, 'Courier New', monospace;\n}"],
+  "mappings": ";AAEA;AACA;AACE,UAAQ;AACR,WAAS;AACT;AAAA,IACE,aAAa;AAAA,IACb,kBAAkB;AAAA,IAClB,UAAU;AAAA,IACV,MAAM;AAAA,IACN,gBAAgB;AAAA,IAChB,KAAK;AAAA,IACL;AACF,cAAY;AACZ,SAAO;AACT;AAEA;AACE,cAAY;AACd;AAEA;AACE,SAAO;AACT;AAEA;AACE;AAAA,IAAa,SAAS;AAAA,IAAE,MAAM;AAAA,IAAE,QAAQ;AAAA,IAAE,aAAa;AAAA,IAAE;AAC3D;",
+  "names": []
+}
